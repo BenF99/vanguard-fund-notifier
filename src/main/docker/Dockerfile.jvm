@@ -1,0 +1,29 @@
+FROM registry.access.redhat.com/ubi8/openjdk-21:1.19
+
+ENV LANGUAGE='en_US:en'
+
+# We make four distinct layers so if there are application changes the library layers can be re-used
+COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185 target/quarkus-app/*.jar /deployments/
+COPY --chown=185 target/quarkus-app/app/ /deployments/app/
+COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+
+EXPOSE 8080
+USER 1000
+ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+
+#RUN --mount=type=secret,id=QUARKUS_MAILER_APPROVED_RECIPIENTS,uid=1000 \
+# export QUARKUS_MAILER_APPROVED_RECIPIENTS=$(cat /run/secrets/QUARKUS_MAILER_APPROVED_RECIPIENTS)
+#
+#RUN --mount=type=secret,id=QUARKUS_MAILER_FROM,uid=1000 \
+# export QUARKUS_MAILER_FROM=$(cat /run/secrets/QUARKUS_MAILER_FROM)
+#
+#RUN --mount=type=secret,id=QUARKUS_MAILER_PASSWORD,uid=1000 \
+# export QUARKUS_MAILER_PASSWORD=$(cat /run/secrets/QUARKUS_MAILER_PASSWORD)
+#
+#RUN --mount=type=secret,id=QUARKUS_MAILER_USERNAME,uid=1000 \
+# export QUARKUS_MAILER_USERNAME=$(cat /run/secrets/QUARKUS_MAILER_USERNAME)
+
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+

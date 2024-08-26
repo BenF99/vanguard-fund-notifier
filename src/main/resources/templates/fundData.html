@@ -1,0 +1,19 @@
+{@java.util.List<com.financial.notifier.model.Fund> funds}
+<!DOCTYPE html>
+<html>
+<body>
+{#for fund in funds}
+<h1>{fund.name}</h1>
+<p style="font-size:16px; font-weight:bold; color:{#if fund.navPrice.amountChange.startsWith('-')}red{#else}green{/if};">
+    There was {#if fund.navPrice.amountChange.startsWith('-')}a DECREASE{#else}an INCREASE{/if} of {fund.navPrice.amountChange} ({fund.navPrice.percentChange})
+</p>
+<table>
+    <tr><th>Attribute</th><th>Value</th></tr>
+    <tr><td>Current Value</td><td>{fund.navPrice.value}</td></tr>
+    <tr><td>As of Date</td><td>{fund.navPrice.asOfDate}</td></tr>
+    <tr><td>MM Change Amount</td><td>{fund.navPrice.mmAmountChange}</td></tr>
+    <tr><td>MM Current Value</td><td>{fund.navPrice.mmValue}</td></tr>
+</table>
+{/for}
+</body>
+</html>
